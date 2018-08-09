@@ -1,4 +1,4 @@
-FROM mono:latest
+FROM ubuntu:latest
 
 ARG username=me
 
@@ -15,6 +15,8 @@ apt-get install -y libmono-cil-dev nzbdrone && \
 rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* && \
 useradd -s /bin/bash -m -G root $username
 
-EXPOSE 8990
+VOLUME ["/mnt/Plex"]
+
+EXPOSE 8989
 
 CMD ["/bin/su", "-l", "me", "-c /usr/bin/mono --debug /opt/NzbDrone/NzbDrone.exe -nobrowser"]
