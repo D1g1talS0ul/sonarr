@@ -1,24 +1,21 @@
 FROM ubuntu:latest
 
-ARG username=me
+ARG DEBIAN_FRONTEND="noninteractive"
 
 RUN \
 ln -sf /usr/share/zoneinfo/US/Mountain /etc/localtime && \
+useradd -s /bin/bash -m -G root sonarr && \
 apt-get update && \
-apt install -y gnupg && \
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FDA5DFFC && \
-echo "deb http://apt.sonarr.tv/ master main" > \
-        /etc/apt/sources.list.d/sonarr.list && \
+apt install -y gnupg ca-certificates && \
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 2009837CBFFD68F45BC180471F4F90DE2A9B4BF8 && \
+echo "deb https://apt.sonarr.tv/ubuntu bionic main" | tee /etc/apt/sources.list.d/sonarr.list && \
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && \
+echo "deb https://download.mono-project.com/repo/ubuntu stable-bionic main" | tee /etc/apt/sources.list.d/mono-official-stable.list && \
 apt-get update && \
-apt-get install -y libmono-cil-dev nzbdrone && \
- apt-get clean && \
-rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/* && \
-useradd -s /bin/bash -m -G root $username && \
-chown -R $username /opt/NzbDrone
-
-VOLUME ["/mnt/Plex"]
+apt-get install -y mono-devel sonarr && \
+apt-get clean && \
+rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
 EXPOSE 8989
 
-# change me to your username.  ARG or ENV not supported in CMD
-CMD ["/bin/su", "-l", "me", "-c /usr/bin/mono --debug /opt/NzbDrone/NzbDrone.exe -nobrowser"]
+CMD ["/bin/su", "-l", "sonarr", "-c /usr/bin/mono --debug /usr/lib/sonarr/bin/Sonarr.exe -nobrowser"]
