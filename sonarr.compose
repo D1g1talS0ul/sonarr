@@ -1,0 +1,17 @@
+version: "3"
+services:
+  sonarr3:
+    container_name: sonarr3
+    image: mine/sonarr3
+    ports:
+      - "8989:8989/tcp"
+      - "9898:9898/tcp"
+    environment:
+      - PUID=1000
+      - GUID=1000
+      - UMASK=002
+      - TZ=US/Mountain
+    volumes:
+      - /mnt/Plex/:/mnt/Plex/
+      - /mnt/Plex/Sonarr:/home/sonarr/.config/Sonarr
+    restart: unless-stopped
